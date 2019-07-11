@@ -4,11 +4,8 @@ Naples.
 The exam track includes the following specifications (original track in Italian):
 
 
+DESCRIZIONE:
 
-Laboratorio di Reti di Calcolatori
-A.A. 2018 - 2019
-BitCoin
-Descrizione
 Si vuole realizzare un sistema per la gestione di una criptovaluta basato su
 una rete P2P. Il sistema è basato sulla gestione di una blockchain, ovvero
 una sequenza di blocchi in cui ogni blocco contiene una transazione.
@@ -23,7 +20,7 @@ per la comunicazione tra processi. Corredare l’implementazione di adeguata
 documentazione.
 
 
-Descrizione dettagliata
+DESCRIZIONE DETTAGLIATA:
 
 NodoW:
 Un NodoW per ricevere un pagamento fornisce il proprio nome (IP PORTA)
