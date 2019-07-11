@@ -1,6 +1,9 @@
 # Cmake build files
 /build
 
+# Test dir
+/src/test
+
 # Prerequisites
 *.d
 

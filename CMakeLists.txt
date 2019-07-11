@@ -10,7 +10,7 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/src/lib/dynamic)
 link_directories(${CMAKE_SOURCE_DIR}/src/lib)
 
 #set header file of libs location
-set(INCLUDE_LOCATION ${CMAKE_SOURCE_DIR}/src/include)
+set(INCLUDE_LOCATION ${CMAKE_SOURCE_DIR}/src/header)
 include_directories(SYSTEM ${INCLUDE_LOCATION})
 
 #set bin dir
