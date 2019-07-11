@@ -22,8 +22,6 @@ char *gen_time_stamp()
   time_t timeval = time(NULL);
   struct tm *t = gmtime(&timeval);
 
-  printf("\n\nvalore del flag :%d\n\n", t->tm_isdst);
-
 
   // if daylight saving time is in effect
   if (t->tm_isdst == 0)
