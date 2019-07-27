@@ -1,4 +1,4 @@
-#include <retibtc/rwsincro.h>
+#include "../header/rwsincro.h"
 
 
 RW_sincro rw_sincro_create(short prio)

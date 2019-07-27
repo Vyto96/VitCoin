@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdlib.h>
-#include <retibtc/utils.h>
+#include "utils.h"
 
 enum priority{ R_PRIO, W_PRIO };
 enum roles{ READER, WRITER };
@@ -31,31 +31,31 @@ void rw_sincro_entry_section(RW_sincro rw_stuff, short role);
 void rw_sincro_exit_section(RW_sincro rw_stuff, short role);
 
 
-// W_PRIO && READER
+// W_PRIO && READER ENTRY SECTION
 void wr_entry_section(RW_sincro rw_stuff);
 
-// W_PRIO && READER
+// W_PRIO && READER EXIT SECTION
 void wr_exit_section(RW_sincro rw_stuff);
 
 
-// W_PRIO && WRITER
+// W_PRIO && WRITER ENTRY SECTION
 void ww_entry_section(RW_sincro rw_stuff);
 
-// W_PRIO && WRITER
+// W_PRIO && WRITER EXIT SECTION
 void ww_exit_section(RW_sincro rw_stuff);
 
 
-// R_PRIO && READER ENTRY
+// R_PRIO && READER ENTRY SECTION
 void rr_entry_section(RW_sincro rw_stuff);
 
-// R_PRIO && READER EXIT
+// R_PRIO && READER EXIT SECTION
 void rr_exit_section(RW_sincro rw_stuff);
 
 
-// R_PRIO && WRITER ENTRY
+// R_PRIO && WRITER ENTRY SECTION
 void rw_entry_section(RW_sincro rw_stuff);
 
-// R_PRIO && WRITER EXIT
+// R_PRIO && WRITER EXIT SECTION
 void rw_exit_section(RW_sincro rw_stuff);
 
 
