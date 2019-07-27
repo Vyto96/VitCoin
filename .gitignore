@@ -4,6 +4,10 @@
 # Test dir
 /src/test
 
+# Todo file
+TODO.txt
+
+
 # Prerequisites
 *.d
 
