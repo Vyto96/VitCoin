@@ -10,7 +10,7 @@ hash_t calculate_hash(char s[BUFFLEN])
 
 void print_hash(hash_t h)
 {
-  printf("\n");
+  // printf("\n");
   for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
   {
     printf("%02x", h[i]);
@@ -27,5 +27,8 @@ void hashcpy(hash_t dst, hash_t src)
 
 bool hash_equal(hash_t a, hash_t b)
 {
+  if(a == NULL || b == NULL)
+    printf("\nhash pointer of a or b is null\n");
+
   return (strncmp((const char *)a, (const char *)b, SHA256_DIGEST_LENGTH) == 0) ? true : false;
 }
