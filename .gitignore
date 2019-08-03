@@ -4,8 +4,8 @@
 # Test dir
 /src/test
 
-# Todo file
-TODO.txt
+# Todo and other note file
+*.txt
 
 
 # Prerequisites
