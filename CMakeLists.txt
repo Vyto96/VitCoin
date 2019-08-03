@@ -40,9 +40,7 @@ add_executable(server src/server/main.c ${SERVER_LIBS})
 target_link_libraries(server libraries OpenSSL::SSL)
 
 # add specific lib for peer
-set(PEER_LIBS src/peer/peer.c)
-# TODO: controlla se attivare questo
-#set(PEER_LIBS src/peer/peer.c src/peer/peer_structure.c)
+set(PEER_LIBS src/peer/peer.c  src/peer/connected_ent.c  src/peer/peer_pkg.c)
 add_executable(peer src/peer/main.c ${PEER_LIBS})
 target_link_libraries(peer libraries OpenSSL::SSL)
 
