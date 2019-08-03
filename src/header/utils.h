@@ -15,5 +15,6 @@
 
 void* obj_malloc(size_t size);
 char *gen_time_stamp();
+void usage(char *usg);
 
 #endif

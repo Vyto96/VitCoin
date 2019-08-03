@@ -39,3 +39,10 @@ char *gen_time_stamp()
 
   return time_stamp;
 }
+
+
+void usage(char *usg)
+{
+  fprintf(stderr, usg);
+  exit(EXIT_FAILURE);
+}
