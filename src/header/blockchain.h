@@ -64,7 +64,7 @@ void visit_block_info(void *info);
 bool compare_block_info(void* x, void* y);
 
 //------------------------------------------------------------------------------SUPPORT METHOD
-//--------------------------------------------------------CONSTRUCTION METHOD
+//-----------------------------------------------------------CONSTRUCTION METHOD
 Bchain create_bchain();
 Block generate_block(
   void *info,
@@ -81,6 +81,7 @@ hash_t get_last_id(Bchain bc);
 Block get_seq_block(Bchain bc, int seq);
 Block get_seq_max_block(Bchain bc, int seq);
 bool get_prev_id(Bchain bc, unsigned char prev_id[SHA256_DIGEST_LENGTH], int seq);
+List get_related_info(Bchain bc, void* related_info, COMPARE_BLOCK_INFO);
 
 
 //----------------------------------------------------------------CONTROL METHOD
@@ -99,14 +100,12 @@ void visit_block(Block bl, VISIT_BLOCK_INFO);
 void visit_tails_to_cut(Bchain bc, VISIT_BLOCK_INFO);
 void visit_genesis(Bchain bc);
 void visit_side_block(Block bl, int ti, VISIT_BLOCK_INFO);
+void visit_bchain(Bchain bc, VISIT_BLOCK_INFO);
 
-
-//------------------------------------------------------------------------------MAIN METHOD
+//--------------------------------------------------------------------ADD METHOD
 bool add_block(Bchain bc, Block b);
-
 bool add_recreated_tail(Bchain bc, Block recreated, hash_t old_tail_id);
 
-void visit_bchain(Bchain bc, VISIT_BLOCK_INFO);
 
 
 

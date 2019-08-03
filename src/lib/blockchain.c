@@ -69,6 +69,10 @@ void init_genesis(Bchain bc, struct s_net_ent creator, char* seed)
 // get sequence number tail block
 int get_last_seq(Bchain bc)
 {
+  if(is_bchain_empty(bc))
+  {
+    return -1;
+  }
   return bc->max_tail->seq;
 }
 
@@ -183,6 +187,57 @@ bool get_prev_id(Bchain bc, unsigned char prev_id[SHA256_DIGEST_LENGTH], int seq
   }
 
   return found;
+}
+
+// get a list of info that are related to the searched info
+List get_related_info(Bchain bc, void* searched_info, COMPARE_BLOCK_INFO)
+{
+
+  if(bc == NULL)
+  {
+    printf("\n Blockchain pointer is NULL. Search of list of related info in blockchain failed.\n");
+    return NULL;
+  }
+
+  if(searched_info == NULL)
+  {
+    printf("\n info pointer to search is NULL. Search of list of related info in blockchain failed.\n");
+    return NULL;
+  }
+
+  if(is_bchain_empty(bc))
+  {
+    printf("\nBlockchain is empty!\n");
+    return NULL;
+  }
+
+
+  // first valid block
+  Block tmp_bl = bc->genesis->next;
+
+  List found_info = create_list();
+
+  while(tmp_bl != NULL)
+  {
+    // check if block info is related to the searched info
+    if( compare_block_info(tmp_bl->info, searched_info) )
+      add_to_list(found_info, tmp_bl->info);
+
+    // find the max tail
+    while(tmp_bl->next == NULL && tmp_bl->side != NULL)
+      tmp_bl = tmp_bl->side;
+
+    // go to next sequence block
+    tmp_bl = tmp_bl->next;
+  }
+
+  if( !is_list_empty(found_info) )
+    return found_info;
+  else
+  {
+    free(found_info);
+    return NULL;
+  }
 }
 
 
@@ -328,6 +383,7 @@ void save_not_max_tails(Bchain bc)
     Tail_tc tf = (Tail_tc)obj_malloc(TTC_SIZE);
     tf->prev_bl = prev_block;
     tf->prev_type = FATHER;
+
     add_to_list(bc->tails_to_cut, tf);
   }
 
@@ -489,8 +545,53 @@ void visit_side_block(Block bl, int ti, VISIT_BLOCK_INFO)
 }
 
 
+// visit every block of bchain
+void visit_bchain(Bchain bc, VISIT_BLOCK_INFO)
+{
+  if(bc == NULL)
+  {
+    printf("\n Blockchain pointer is NULL. Visit of the blockchain failed.\n");
+    return;
+  }
 
-//------------------------------------------------------------------------------BCHAIN MAIN METHOD
+  if(is_bchain_empty(bc))
+  {
+    printf("\nBlockchain is empty!\n");
+    return;
+  }
+
+  // visit genesis block
+  visit_genesis(bc);
+
+  // if there are no other blocks to visit besides the genesis block
+  if(bc->size < 2)
+    return;
+
+
+  int ti = 0, // tail index
+      si = 1, // sequence  index
+      ls = get_last_seq(bc); // last sequence number
+
+  // first valid block
+  Block tmp_bl = bc->genesis->next;
+
+  while(si <= ls)
+  {
+    for (int i = 0; i < 50; i++) printf("-");
+    printf("\n");
+    visit_side_block(tmp_bl, ti, visit_block_info);
+
+    // find the right tail
+    while(tmp_bl->next == NULL && tmp_bl->side != NULL)
+      tmp_bl = tmp_bl->side;
+
+    // go to next sequence block
+    tmp_bl = tmp_bl->next;
+    si++;
+  }
+}
+
+//--------------------------------------------------------------------ADD METHOD
 // add new (next or tail) block
 bool add_block(Bchain bc, Block bl)
 {
@@ -511,8 +612,16 @@ bool add_block(Bchain bc, Block bl)
     return false;
   }
 
+  // add genesis block
+  if(bl->seq == 0 && ls == -1)
+  {
+    bc->genesis = bl;
+    bc->max_tail = bl;
+    bc->size++;
+    return true;
+  }
 
-  // new tail
+  // add new tail
   if( bl->seq == ls )
   {
     // find last max tail added
@@ -529,7 +638,7 @@ bool add_block(Bchain bc, Block bl)
     if(bl->rand_sec > bc->max_tail->rand_sec)
       bc->max_tail = bl;
   }
-  else // next sequence block
+  else // add next sequence block
   {
     // check if multi-tail
     if( has_multi_tail(bc) )
@@ -599,51 +708,4 @@ bool add_recreated_tail(Bchain bc, Block recreated, hash_t old_tail_id)
   add_block(bc, recreated);
 
   return true;
-}
-
-
-// visit every block of bchain
-void visit_bchain(Bchain bc, VISIT_BLOCK_INFO)
-{
-  if(bc == NULL)
-  {
-    printf("\n Blockchain pointer is NULL. Visit of the blockchain failed.\n");
-    return;
-  }
-
-  if(is_bchain_empty(bc))
-  {
-    printf("\nBlockchain is empty!\n");
-    return;
-  }
-
-  // visit genesis block
-  visit_genesis(bc);
-
-  // if there are no other blocks to visit besides the genesis block
-  if(bc->size < 2)
-    return;
-
-
-  int ti = 0, // tail index
-      si = 1, // sequence  index
-      ls = get_last_seq(bc); // last sequence number
-
-  // first valid block
-  Block tmp_bl = bc->genesis->next;
-
-  while(si <= ls)
-  {
-    for (int i = 0; i < 50; i++) printf("-");
-    printf("\n");
-    visit_side_block(tmp_bl, ti, visit_block_info);
-
-    // find the right tail
-    while(tmp_bl->next == NULL && tmp_bl->side != NULL)
-      tmp_bl = tmp_bl->side;
-
-    // go to next sequence block
-    tmp_bl = tmp_bl->next;
-    si++;
-  }
 }
