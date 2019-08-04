@@ -24,7 +24,7 @@ int Connect(int sockfd, const struct sockaddr *addr)
   if(connect(sockfd, addr, len) == -1)
   {
     perror("Connect");
-    return exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   return 0;
 }

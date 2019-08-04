@@ -24,5 +24,7 @@ bool compare_connected_ent_by_fd(void *x, void *y)
   {
     fprintf(stderr, "\nATTENTION: Connected_ent error, NULL pointer found in compare_connected_ent_by_fd()\n" );
     return false;
-  }  return (a->fd == b->fd);
+  }
+
+  return (a->fd == b->fd);
 }

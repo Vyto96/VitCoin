@@ -18,7 +18,7 @@ struct s_trns
   struct s_net_ent dst;
   char time_stamp[TIME_STAMP_LEN];
 };
-typedef struct s_trns *Trns;
+typedef struct s_trns* Trns;
 #define TRNS_SIZE sizeof(struct s_trns)
 
 Trns create_transaction(char* ts, float am, struct s_net_ent src, struct s_net_ent dst);

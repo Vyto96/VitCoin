@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     rw_sincro_entry_section(sincro_conn_peer, READER);
     rw_sincro_entry_section(sincro_conn_wallet, READER);
 
-     for(i_fd=0; i_fd<=maxfd; i_fd++)
+     for(i_fd=0; i_fd<=max_fd; i_fd++)
        if(fd_open[i_fd])
          FD_SET(i_fd, &rset);
 
@@ -96,8 +96,8 @@ int main(int argc, char **argv)
       // reset timeout
       ts.tv_sec = 2;
 
-      n_ready = pselect(maxfd+1, &rset , NULL , NULL , &ts, &orig_sigmask);
-    }while(nready == 0); // zero if the timeout expires before anything interesting happens.
+      n_ready = pselect(max_fd+1, &rset , NULL , NULL , &ts, &orig_sigmask);
+    }while(n_ready == 0); // zero if the timeout expires before anything interesting happens.
 
     if(n_ready < 0)
     {
@@ -134,9 +134,9 @@ int main(int argc, char **argv)
       n_ready--;
       conn_fd = Accept(list_fd, NULL);
       setsockopt(conn_fd, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(keepalive));
-      //update fd_open and maxfd
+      //update fd_open and max_fd
       fd_open[conn_fd] = 1;
-      maxfd = (conn_fd > maxfd) ? conn_fd : maxfd;
+      max_fd = (conn_fd > max_fd) ? conn_fd : max_fd;
     }
 
     /*CHECK REMAINING n_ready FD FOR SERVE THE REQUESTS********************/
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
             pthread_create( &tid, attr, hook_p2p, (void*) arg_fd);
             printf("\nthread: %d, created to serve HOOK_P2P request.\n", (int)tid);
             break;
-          //
+          /*
           // case HOOK_W2P:
           //   printf("\nSTART HOOK_W2P REQUEST\n");
           //   pthread_create( &tid, attr, hook_w2p, (void*) arg_fd);
@@ -213,13 +213,13 @@ int main(int argc, char **argv)
           // case SHUTDOWN_NET: // ricevuto dal server
           //   printf("\nShutting down network...\n");
           //   exit(EXIT_SUCCESS);
-
+          */
           default:
             printf("\nMACRO NOT VALID! Request Aborted.\n");
-        }
-      }
-    }
-  }
+        } // switch case
+      } // if FD_ISSET()
+    } // while n_ready
+  } // while(1)
 
   exit(EXIT_SUCCESS);
 }

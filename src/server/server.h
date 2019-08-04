@@ -28,7 +28,7 @@
 //--------------------------------------------------------------------GLOBAL VAR
 List network; // list of peers service Net_ent
 // struct s_net_ent client_ent; // TODO: CONTROLLA SE SERVE
-hash_t hash_psw // password for for access to network
+hash_t hash_psw; // password for for access to network
 int client_fd; // used from every functions
 
 // REQUEST FUNCTIONS
@@ -38,6 +38,6 @@ void hook_peer();
 // void re_hook_wallet();
 
 // UTILITY
-void read_cli_param(int argc, char **argv, int* port);
+void read_cli_param(int argc, char **argv, unsigned short* port);
 void print_status();
 #endif

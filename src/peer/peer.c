@@ -84,7 +84,7 @@ bool hook_network()
   printf("Attempt to hook to network:\n");
 
   //---------------------------------------------------authorization protocol
-  if(!sha_auth(server_fd, pwd))
+  if(!sha256_auth(server_fd, hash_psw))
   { // wrong password
     fprintf(stderr, "\nwrong password, retry!\n");
     exit(EXIT_FAILURE);
@@ -130,27 +130,27 @@ bool hook_network()
     short confirmed_conn = 0;
 
     struct s_net_ent tmp_ent;
-    Connected_ent conn_peer = NULL;
+    Connected_ent new_peer = NULL;
 
     for(int i=1; i<n_peer; i++)
     {
       recv_net_ent(server_fd, &tmp_ent);
 
       if(count_succ_conn == 0) // if is the first peer
-        conn_peer = hook_to_peer(tmp_ent, 1); // 1 for download the bchain
+        new_peer = hook_to_peer(tmp_ent, 1); // 1 for download the bchain
       else
-        conn_peer = hook_to_peer(tmp_ent, 0); // 0 for only hook
+        new_peer = hook_to_peer(tmp_ent, 0); // 0 for only hook
 
-      if( conn_peer != NULL )
+      if( new_peer != NULL )
       {
         // connection confirmed
         confirmed_conn = 1;
         count_succ_conn++;
         // update fd_open and max_fd
-        fd_open[conn_peer->fd] = 1;
-        max_fd = (conn_peer->fd > max_fd) ? conn_peer->fd : max_fd;
+        fd_open[new_peer->fd] = 1;
+        max_fd = (new_peer->fd > max_fd) ? new_peer->fd : max_fd;
         // add to peers list
-        add_to_list(conn_peer, conn_peer);
+        add_to_list(conn_peer, new_peer);
       }
       send_short(server_fd, confirmed_conn);
       confirmed_conn = 0;
@@ -171,7 +171,7 @@ void *peer_state_printer()
 {
   while(1)
   {
-    sem_wait(printer);
+    sem_wait(printer_sem);
     print_peer_state();
   }
 }
@@ -195,7 +195,7 @@ void *hook_p2p(void *arg)
     int n_block = block_chain->size;
     int last_seq = get_last_seq(block_chain);
     // send it to the peer
-    send_int(fd, &n_block); // TODO: controlla ritorno e rilascia mutex in caso d'errore e termina thread
+    send_int(fd, n_block); // TODO: controlla ritorno e rilascia mutex in caso d'errore e termina thread
 
     // send all block for every sequence number
     for(int i = 0; i < last_seq; i++)
@@ -248,7 +248,7 @@ void read_cli_param(int argc, char **argv)
     switch(opt)
     {
       case 'a': // server Address
-        strncpy(server.addr, optarg, LEN_ADDRESS);
+        strncpy(server.addr, optarg, ADDRESS_LEN);
         flags[0] = 1;
         break;
 
@@ -268,7 +268,7 @@ void read_cli_param(int argc, char **argv)
         break;
 
       case 't': // Test mode activated
-        debug_mode = true;
+        test_mode = true;
         break;
 
       case 'h': // Help
@@ -306,8 +306,8 @@ void init_global_var()
   pthread_attr_setdetachstate(attr, PTHREAD_CREATE_DETACHED);
 
   // semaphore "event" (set to 0) used to activate the printer thread
-  printer = (sem_t*)obj_malloc(sizeof(sem_t));
-  sem_init(printer, 0, 0);
+  printer_sem = (sem_t*)obj_malloc(sizeof(sem_t));
+  sem_init(printer_sem, 0, 0);
 
   // flag used by threads to book for inserting a block in the bchain
   flag_tid = false;
@@ -332,7 +332,7 @@ void destroy_global_var()
 {
   pthread_attr_destroy(attr);
 
-  sem_destroy(printer);
+  sem_destroy(printer_sem);
 
   empty_list(conn_peer);
   free(conn_peer);
@@ -359,4 +359,32 @@ void sig_handler(int n)
   {
     refresh_flag = true;
   }
+}
+
+
+void print_peer_state()
+{
+
+  printf("\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
+  printf("\t\tPEER: [%s:%d]\n\n", my_service_ent.addr, my_service_ent.port);
+
+  rw_sincro_entry_section(sincro_block_chain, READER);
+    printf("\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
+    printf("\t\tBLOCK-CHAIN\n");
+    visit_bchain(block_chain, visit_trns);
+  rw_sincro_exit_section(sincro_block_chain, READER);
+
+  rw_sincro_entry_section(sincro_conn_peer, READER);
+  printf("\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
+    printf("\t\tCONNECTED PEERS\n\n");
+    visit_list(conn_peer, visit_connected_ent);
+  rw_sincro_exit_section(sincro_conn_peer, READER);
+
+  rw_sincro_entry_section(sincro_conn_wallet, READER);
+  printf("\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
+    printf("\t\tCONNECTED WALLETS\n\n");
+    visit_list(conn_wallet, visit_connected_ent);
+  rw_sincro_exit_section(sincro_conn_wallet, READER);
+
+  printf("\nwaiting for requests...\n");
 }

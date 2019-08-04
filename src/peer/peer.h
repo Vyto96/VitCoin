@@ -1,6 +1,18 @@
 #ifndef PEER_H
 #define PEER_H
 
+#include <pthread.h>
+#include <signal.h>
+#include <sys/select.h>
+
+#include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "../header/p2p.h"
 #include "../header/list.h"
 #include "../header/net.h"
@@ -9,6 +21,7 @@
 #include "../header/utils.h"
 #include "../header/sockwrap.h"
 #include "../header/blockchain.h"
+#include "../header/rwsincro.h"
 
 #include "connected_ent.h"
 #include "peer_pkg.h"
@@ -29,7 +42,7 @@
 struct sockaddr_in server_add;
 struct s_net_ent my_service_ent, server;
 bool test_mode;
-hash_t hash_psw // password for for access to network
+hash_t hash_psw; // password for for access to network
 
 // thread & their Sincro stuff
 pthread_attr_t *attr;
@@ -71,6 +84,7 @@ void read_cli_param(int argc, char **argv);
 void init_global_var();
 void destroy_global_var();
 void sig_handler(int n);
+void print_peer_state();
 
 
 

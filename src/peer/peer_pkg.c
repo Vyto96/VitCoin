@@ -26,7 +26,7 @@ int recv_hook_pkg(int fd, Hook_pkg hp)
 
 int send_block_pkg(int fd, Block bl)
 {
-  s_block_pkg bp;
+  struct s_block_pkg bp;
 
   bp.transaction = *(Trns) bl->info;
   hashcpy(bp.id, bl->id);

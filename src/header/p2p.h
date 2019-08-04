@@ -12,9 +12,9 @@
 // MACRO FOR REQUESTS MADE AT SERVER
 enum server_macro{
   HOOK_PEER,
-  RE_HOOK_PEER,
+  RE_HOOK_PEER, // TODO: leva
   HOOK_WALLET,
-  RE_HOOK_WALLET
+  RE_HOOK_WALLET // TODO: leva
 };
 
 // MACRO FOR REQUESTS MADE AT PEER
@@ -23,8 +23,8 @@ enum peer_macro{
   HOOK_W2P,
   W_BALANCE,
   W_TRANSACTION,
-  P_BLOCK,
-  SHUTDOWN_NET,
+  P_BLOCK,  // TODO: da dividere in sottocasi
+  SHUTDOWN_NET, // TODO: da levare
   SOCKET_ERROR
 };
 
@@ -36,7 +36,7 @@ void fill_address(
     unsigned short        port
   );
 
-bool sha256_auth(int server_fd, char *psw);
+bool sha256_auth(int server_fd, hash_t psw);
 
 
 //----------------------------------------------------------NET TRAFFIC FUNCTION

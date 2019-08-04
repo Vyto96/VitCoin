@@ -7,14 +7,14 @@ int main(int argc, char **argv)
   //------------------------------------------------------------------------VAR
   struct sockaddr_in server_add;
   int list_fd;
-  unsignd short listen_port;
+  unsigned short listen_port;
 
   //-------------------------------------------------------------INIT GLOBAL VAR
-  read_cli_param(argc, argv, listen_port);
+  read_cli_param(argc, argv, &listen_port);
   network = create_list();
 
   //----------------------------------------------------------------SETUP SERVER
-  fill_address(&server_add, AF_INERT, NULL, listen_port);
+  fill_address(&server_add, AF_INET, NULL, listen_port);
   // listening on tcp socket type
   list_fd = Socket(AF_INET, SOCK_STREAM, 0);
   // set reuse address option on socket
@@ -25,10 +25,10 @@ int main(int argc, char **argv)
   // set the backlog for listen queue
   Listen(list_fd, BACKLOG);
 
-  int request, authorizzation = 0;
+  short request, authorizzation = 0;
   hash_t client_psw = (hash_t)obj_malloc(SHA256_DIGEST_LENGTH);
 
-  While(1)
+  while(1)
   {
     print_status();
     client_fd = Accept(list_fd, NULL);
@@ -57,21 +57,21 @@ int main(int argc, char **argv)
           printf("HOOK_PEER\n");
           hook_peer();
           break;
-
-        case RE_HOOK_PEER:
-          printf("RE_HOOK_PEER\n");
-          re_hook_peer();
-          break;
-
-        case HOOK_WALLET:
-          printf("HOOK_WALLET\n");
-          hook_wallet();
-          break;
-
-        case RE_HOOK_WALLET:
-          printf("RE_HOOK_WALLET\n");
-          re_hook_wallet();
-          break;
+        //
+        // case RE_HOOK_PEER:
+        //   printf("RE_HOOK_PEER\n");
+        //   re_hook_peer();
+        //   break;
+        //
+        // case HOOK_WALLET:
+        //   printf("HOOK_WALLET\n");
+        //   hook_wallet();
+        //   break;
+        //
+        // case RE_HOOK_WALLET:
+        //   printf("RE_HOOK_WALLET\n");
+        //   re_hook_wallet();
+        //   break;
 
         default:
           printf("MACRO not correct\n");

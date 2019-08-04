@@ -3,8 +3,8 @@
 // ------------------------------------------------------------REQUEST FUNCTIONS
 void hook_peer()
 {
-  int confirm;
-  Net_ent peer_service_ent = (Net_ent) obj_malloc(NET_ENT);
+  short confirm;
+  Net_ent peer_service_ent = (Net_ent) obj_malloc(NET_ENT_SIZE);
 
   // receive the service net_ent of peer
   recv_net_ent(client_fd, peer_service_ent);
@@ -36,7 +36,7 @@ void hook_peer()
   else // network->size != 0, the new peer isn't the first
   {
     // minimum number of peers to which the new peer should connect
-    int min_peers_number = network->count * MIN_PEERS_PERC;
+    int min_peers_number = network->size * MIN_PEERS_PERC;
     if(min_peers_number == 0)
       min_peers_number = 1;
 
@@ -44,7 +44,7 @@ void hook_peer()
     send_short(client_fd, min_peers_number);
 
     // response from peer
-    int confirmed_conn = 0;
+    short confirmed_conn = 0;
     // counter of succesfull connections
     int count_succ_conn = 0;
 
@@ -57,7 +57,7 @@ void hook_peer()
     // send min_peers_number net_ent to new peer
     for (int i = 0; i < min_peers_number; i++)
     {
-      to_send = search_by_index(network, i_choice);
+      to_send = search_by_index(network, i_chosen);
 
       printf("Sending to peer with service2");
       visit_net_ent(peer_service_ent);
@@ -66,27 +66,28 @@ void hook_peer()
       // send peer
       send_net_ent(client_fd, to_send);
       // wait for confirm
-      recv_short(connfd, &confirmed_conn);
+      recv_short(client_fd, &confirmed_conn);
       // update counter
       if(confirmed_conn)
-        succ_connection++;
+        count_succ_conn++;
 
       /*the next peer to be sent is chosen starting from the index previously
         chosen, to avoid sending equal peers*/
-      i_choice =(i_choice + 1) % network->size;
+      i_chosen =(i_chosen + 1) % network->size;
     }
 
     // check if there is at least one connection
-    if (succ_connection > 0)
-      add_to_list(network, (void*)peer_listen_ent); // add new peer to network
+    if (count_succ_conn > 0)
+      add_to_list(network, (void*)peer_service_ent); // add new peer to network
   }
 }
 
 
 // ----------------------------------------------------------------------UTILITY
 // read the parameters passed by command line
-void read_cli_param(int argc, char **argv, int* listen_port)
+void read_cli_param(int argc, char **argv, unsigned short* listen_port)
 {
+  int opt = 0;
   hash_psw = (hash_t) obj_malloc(SHA256_DIGEST_LENGTH);
   hash_psw = NULL;
   *listen_port = 0;
@@ -114,8 +115,8 @@ void read_cli_param(int argc, char **argv, int* listen_port)
 
   if(!listen_port)
   {
-    printf("Listen on default port %u...\n", DEFAULT_PORT);
-    *listen_port = DEFAULT_PORT;
+    printf("Listen on default port %u...\n", DEFAULT_SERVER_PORT);
+    *listen_port = DEFAULT_SERVER_PORT;
   }
 
   if(hash_psw == NULL)
