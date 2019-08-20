@@ -22,9 +22,6 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 find_package(OpenSSL REQUIRED)
 if( OpenSSL_FOUND )
   set(OPENSSL_USE_STATIC_LIBS TRUE)
-  #message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
-  #message("OpenSSL include dir: ${OPENSSL_INCLUDE_DIR}")
-  #message("OpenSSL libraries: ${OPENSSL_LIBRARIES}")
 endif()
 
 # Collects the names of all the source files in lib directory
