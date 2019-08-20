@@ -2,6 +2,7 @@
 
 int main(int argc, char **argv)
 {
+  // set seed for use of RNG
   srand(time(NULL));
 
   //------------------------------------------------------------------------VAR
@@ -9,19 +10,23 @@ int main(int argc, char **argv)
   int list_fd;
   unsigned short listen_port;
 
-  //-------------------------------------------------------------INIT GLOBAL VAR
+  //---------------------------- ---------------------------------INIT GLOBAL VAR
   read_cli_param(argc, argv, &listen_port);
   network = create_list();
 
   //----------------------------------------------------------------SETUP SERVER
   fill_address(&server_add, AF_INET, NULL, listen_port);
+
   // listening on tcp socket type
   list_fd = Socket(AF_INET, SOCK_STREAM, 0);
+
   // set reuse address option on socket
   int optval = 1;
   setsockopt(list_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval) );
+
   // Bind of address
   Bind(list_fd, (struct sockaddr *) &server_add);
+
   // set the backlog for listen queue
   Listen(list_fd, BACKLOG);
 
@@ -57,21 +62,16 @@ int main(int argc, char **argv)
           printf("HOOK_PEER\n");
           hook_peer();
           break;
-        //
-        // case RE_HOOK_PEER:
-        //   printf("RE_HOOK_PEER\n");
-        //   re_hook_peer();
-        //   break;
-        //
-        // case HOOK_WALLET:
-        //   printf("HOOK_WALLET\n");
-        //   hook_wallet();
-        //   break;
-        //
-        // case RE_HOOK_WALLET:
-        //   printf("RE_HOOK_WALLET\n");
-        //   re_hook_wallet();
-        //   break;
+
+        case HOOK_WALLET:
+          printf("HOOK_WALLET\n");
+          hook_wallet();
+          break;
+
+        case CLOSE_PEER:
+          printf("CLOSE_PEER\n");
+          close_peer();
+          break;
 
         default:
           printf("MACRO not correct\n");
