@@ -15,9 +15,10 @@ void hook_peer()
     visit_net_ent(peer_service_ent);
     printf("because it is the first.\nwaiting for genesis block creation...\n");
 
-    send_short(client_fd, 0);
+    // send 0 to peer because it is the first
+    send_int(client_fd, 0);
 
-    // read the confirm
+    // read the confirm of genesis block creation
     recv_short(client_fd, &confirm);
 
     if(confirm)
@@ -32,6 +33,7 @@ void hook_peer()
       printf("Genesis block creation FAILED; peer not addedd to my list\n");
       return;
     }
+
   }
   else // network->size != 0, the new peer isn't the first
   {
@@ -41,7 +43,7 @@ void hook_peer()
       min_peers_number = 1;
 
     // send min_peers_number to new_peer
-    send_short(client_fd, min_peers_number);
+    send_int(client_fd, min_peers_number);
 
     // response from peer
     short confirmed_conn = 0;
@@ -59,14 +61,17 @@ void hook_peer()
     {
       to_send = search_by_index(network, i_chosen);
 
-      printf("Sending to peer with service2");
+      printf("Sending to peer with service: ");
       visit_net_ent(peer_service_ent);
       printf("this peer: ");
       visit_net_ent(to_send);
+
       // send peer
       send_net_ent(client_fd, to_send);
+
       // wait for confirm
       recv_short(client_fd, &confirmed_conn);
+
       // update counter
       if(confirmed_conn)
         count_succ_conn++;
@@ -80,8 +85,50 @@ void hook_peer()
     if (count_succ_conn > 0)
       add_to_list(network, (void*)peer_service_ent); // add new peer to network
   }
+
+
 }
 
+
+void hook_wallet()
+{
+  int random_peer = 0;
+  Net_ent to_send = NULL;
+
+  // send the number of peer to wallet
+  send_int(client_fd, network->size);
+
+  // check if there is at least one peer in the network
+  if(network->size)
+  {
+    random_peer = rand()%network->size;
+    to_send = search_by_index(network, random_peer);
+
+    printf("\nSending to Wallet the seguent Peer for connection: ");
+    visit_net_ent(to_send);
+
+    send_net_ent(client_fd, to_send);
+  }
+  else
+    fprintf(stderr, "Newtwork isn't UP there isn't Peer to send to Wallet\n");
+
+}
+
+
+
+void close_peer()
+{
+  struct s_net_ent peer_service_ent;
+  Net_ent peer_to_delete;
+  
+  // receive the service net_ent of the peer that is shutting down
+  recv_net_ent(client_fd, &peer_service_ent);
+
+  // extract peer from network list
+  peer_to_delete = extract_from_list( network, &peer_service_ent, compare_net_ent );
+
+  free(peer_to_delete);
+}
 
 // ----------------------------------------------------------------------UTILITY
 // read the parameters passed by command line
@@ -92,7 +139,7 @@ void read_cli_param(int argc, char **argv, unsigned short* listen_port)
   hash_psw = NULL;
   *listen_port = 0;
 
-  while ( (opt = getopt(argc, argv, "h:p:")) != -1)
+  while ( (opt = getopt(argc, argv, "l:p:h")) != -1)
   {
     switch(opt)
     {
@@ -113,7 +160,7 @@ void read_cli_param(int argc, char **argv, unsigned short* listen_port)
     }
   }
 
-  if(!listen_port)
+  if(*listen_port == 0)
   {
     printf("Listen on default port %u...\n", DEFAULT_SERVER_PORT);
     *listen_port = DEFAULT_SERVER_PORT;
@@ -132,7 +179,7 @@ void print_status()
 {
   printf("\n\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
   printf("\tP2P NETWORK:\n\n");
-  printf("\n\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
   visit_list(network, visit_net_ent);
-  printf("\nWaiting for connections...");
+  printf("\n\nѶ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ Ѷ\n\n");
+  printf("\nWaiting for connections...\n");
 }

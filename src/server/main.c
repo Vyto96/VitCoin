@@ -5,7 +5,6 @@ int main(int argc, char **argv)
   // set seed for use of RNG
   srand(time(NULL));
 
-  //------------------------------------------------------------------------VAR
   struct sockaddr_in server_add;
   int list_fd;
   unsigned short listen_port;
@@ -30,32 +29,35 @@ int main(int argc, char **argv)
   // set the backlog for listen queue
   Listen(list_fd, BACKLOG);
 
-  short request, authorizzation = 0;
+  short request;
   hash_t client_psw = (hash_t)obj_malloc(SHA256_DIGEST_LENGTH);
 
+  // START SERVER
   while(1)
   {
     print_status();
     client_fd = Accept(list_fd, NULL);
 
-    //------------------------------------------------------------CHECK PASSWORD
+    // read network password
     full_read(client_fd, client_psw, SHA256_DIGEST_LENGTH);
+
+    // check it
     if( !hash_equal(hash_psw, client_psw) ) // not authenticated
     {
-      authorizzation = 0;
-      send_short(client_fd, authorizzation); //send 0, refusing
+      //send 0, refusing
+      send_short(client_fd, 0);
       printf("Rejecting request, password is NOT correct.\n");
     }
     else //authenticated
     {
       // sending 1, accepting
-      authorizzation = 1;
-      send_short(client_fd, authorizzation);
+      send_short(client_fd, 1);
+
+      printf("\nSHA256 verified, serving request of type: ");
 
       // waiting for request (MACROs)
       recv_short(client_fd, &request);
 
-      printf("\nSHA256 verified, serving request of type: ");
       switch (request)
       {
         case HOOK_PEER:
