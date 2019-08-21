@@ -190,43 +190,43 @@ int main(int argc, char **argv)
           case HOOK_P2P:
             printf("\nSTART HOOK_P2P REQUEST\n");
             pthread_create( &tid, attr, hook_p2p, (void*) arg_fd);
-            printf("\nthread: %d, created to serve HOOK_P2P request.\n", (int)tid);
+            printf("\nthread, created to serve HOOK_P2P request.\n");
             break;
 
           case HOOK_W2P:
             printf("\nSTART HOOK_W2P REQUEST\n");
             pthread_create( &tid, attr, hook_w2p, (void*) arg_fd);
-            printf("\nthread: %d, created to serve HOOK_W2P request.\n", (int)tid);
+            printf("\nthread, created to serve HOOK_W2P request.\n");
             break;
 
           case W_BALANCE:
             printf("\nSTART W_BALANCE REQUEST\n");
             pthread_create( &tid, attr, w_balance, (void*) arg_fd);
-            printf("\nthread: %d, created to serve W_BALANCE request.\n", (int)tid);
+            printf("\nthread, created to serve W_BALANCE request.\n");
             break;
 
           case W_TRANSACTION:
             printf("\nSTART W_TRANSACTION REQUEST\n");
             pthread_create( &tid, attr, w_transaction, (void*) arg_fd);
-            printf("\nthread: %d, created to serve W_TRANSACTION request.\n", (int)tid);
+            printf("\nthread, created to serve W_TRANSACTION request.\n");
             break;
 
           case P_BLOCK:
             printf("\nSTART P_BLOCK REQUEST\n");
             pthread_create( &tid, attr, p_block, (void*) arg_fd);
-            printf("\nthread: %d, created to serve P_BLOCK request.\n", (int)tid);
+            printf("\nthread, created to serve P_BLOCK request.\n");
             break;
 
           case P_RECREATED_BLOCK:
             printf("\nSTART P_RECREATED_BLOCK REQUEST\n");
             pthread_create( &tid, attr, p_recreated_block, (void*) arg_fd);
-            printf("\nthread: %d, created to serve P_RECREATED_BLOCK request.\n", (int)tid);
+            printf("\nthread, created to serve P_RECREATED_BLOCK request.\n");
             break;
 
           case SOCKET_ERROR:
             printf("\nSTART SOCKET_ERROR MANAGEMENT\n");
             pthread_create(&tid, attr, socket_error, (void*) arg_fd);
-            printf("\nthread: %d, created to handle the error detected on the socket.\n", (int)tid);
+            printf("\nthread, created to handle the error detected on the socket.\n");
             break;
 
           default:

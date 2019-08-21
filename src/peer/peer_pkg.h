@@ -11,7 +11,7 @@
 struct s_hook_pkg
 {
   struct s_net_ent ent;
-  short donwload_flag;
+  short download_flag;
 };
 typedef struct s_hook_pkg *Hook_pkg;
 #define HOOK_PKG_SIZE sizeof(struct s_hook_pkg)
