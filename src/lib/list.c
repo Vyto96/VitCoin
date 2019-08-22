@@ -25,12 +25,12 @@ void empty_list(List l)
 }
 
 
-bool add_to_list(List l, void* info)
+void add_to_list(List l, void* info)
 {
   if(l == NULL || info == NULL)
   {
     fprintf(stderr, "\nList, info or both are NULL\n");
-    return false;
+    return;
   }
 
   Node newnode = (Node)obj_malloc(NODE_SIZE);
@@ -44,8 +44,16 @@ bool add_to_list(List l, void* info)
 
   l->tail = newnode;
   l->size++;
+}
 
-  return true;
+
+void append_list(List dst, List src)
+{
+  for(int i = 0; i < src->size; i++)
+  {
+   void* tmp = search_by_index(src, i);
+   add_to_list(dst, tmp);
+  }
 }
 
 
@@ -55,7 +63,7 @@ bool is_list_empty(List l)
 }
 
 
-//------------------------------------------------------------------------------
+//-----------------------------------METHOD THAT NEED OF EXTERNAL IMPLEMENTATION
 void visit_list(List l, VISIT_NODE_INFO)
 {
   int i = 0;

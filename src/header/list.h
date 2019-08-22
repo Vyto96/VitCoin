@@ -1,6 +1,9 @@
 #ifndef LIST_H
 #define LIST_H
-
+/*
+  simple implementation of a generic list with entry only in the queue,
+  speeded up by the use of a pointer precisely to the queue
+*/
 
 #include "utils.h"
 
@@ -25,11 +28,14 @@ typedef struct s_list* List;
 List create_list();
 void empty_list(List l);
 
-bool add_to_list(List l, void* info);
+// push_back in list
+void add_to_list(List l, void* info);
+void append_list(List dst, List src);
+
 bool is_list_empty(List l);
 
 
-//------------------------------------------------------------------------------
+//-----------------------------------METHOD THAT NEED OF EXTERNAL IMPLEMENTATION
 // generic visit(print) function used for visit every node of list
 #define VISIT_NODE_INFO void(*visit_node_info)(void*)
 // generic compare function used for compare info of node
