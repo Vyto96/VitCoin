@@ -26,13 +26,15 @@ char *gen_time_stamp()
   // if daylight saving time is in effect
   if (t->tm_isdst == 0)
     sprintf(time_stamp, "%d/%d/%d_%d:%d:%d", \
-      t->tm_year + 1900, t->tm_mon, t->tm_mday, \
+      t->tm_year + 1900,
+      t->tm_mon + 1,  // month (0-11)
+      t->tm_mday, \
       // +1 for daylight saving time and +1 for the italian time zone
       t->tm_hour + 2, \
       t->tm_min, t->tm_sec);
   else
     sprintf(time_stamp, "%d/%d/%d_%d:%d:%d", \
-      t->tm_year + 1900, t->tm_mon, t->tm_mday, \
+      t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, \
       // +1 for the italian time zone
       t->tm_hour + 1, \
       t->tm_min, t->tm_sec);

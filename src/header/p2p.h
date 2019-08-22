@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include "sockwrap.h"
 #include "utils.h"
 #include "fullio.h"
 #include "hash.h"
