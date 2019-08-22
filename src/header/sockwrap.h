@@ -1,6 +1,10 @@
 #ifndef SOCKWRAP_H
 #define SOCKWRAP_H
 
+/*
+  Berkeley socket interface, wrapping library.
+*/
+
 #define BACKLOG 1024
 
 #include <sys/errno.h>
