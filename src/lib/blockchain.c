@@ -2,7 +2,6 @@
 
 
 //------------------------------------------------------------------------------SUPPORT METHOD
-// init a new empty bchain
 Bchain create_bchain()
 {
   Bchain bc = (Bchain)obj_malloc(BCHAIN_SIZE);
@@ -14,7 +13,6 @@ Bchain create_bchain()
 }
 
 
-// Block constructor
 Block generate_block(
   void *info,
   char not_hash_id[BUFFLEN],
@@ -33,9 +31,7 @@ Block generate_block(
 
   new_block->rand_sec = rand_sec;
   new_block->seq = seq;
-
   new_block->creator = creator;
-  new_block->confirmed = 1;
 
   new_block->side = NULL;
   new_block->next = NULL;
@@ -44,7 +40,6 @@ Block generate_block(
 }
 
 
-// initialize the genesis block and add it to the bchain
 void init_genesis(Bchain bc, struct s_net_ent creator, char* seed)
 {
   hash_t null_prev_id = calculate_hash("NULL");
@@ -66,7 +61,6 @@ void init_genesis(Bchain bc, struct s_net_ent creator, char* seed)
 
 
 //--------------------------------------------------------------------GET METHOD
-// get sequence number tail block
 int get_last_seq(Bchain bc)
 {
   if(is_bchain_empty(bc))
@@ -77,25 +71,23 @@ int get_last_seq(Bchain bc)
 }
 
 
-// like the previous but for the id
 hash_t get_last_id(Bchain bc)
 {
   return bc->max_tail->id;
 }
 
 
-// search the (first) block with the given sequence number
 Block get_seq_block(Bchain bc, int seq)
 {
   if(bc == NULL)
   {
-    printf("\nBlockchain pointer is NULL. Search of block with seq = %d in blockchain failed.\n", seq);
+    fprintf(stderr, "\nBlockchain pointer is NULL. Search of block with seq = %d in blockchain failed.\n", seq);
     return NULL;
   }
 
   if(is_bchain_empty(bc))
   {
-    printf("\nBlockchain is empty!\n");
+    fprintf(stderr, "\nBlockchain is empty!\n");
     return NULL;
   }
 
@@ -103,7 +95,7 @@ Block get_seq_block(Bchain bc, int seq)
 
   if(seq > ls || seq < 0)
   {
-    printf("\nSequence number not valid. Search in blockchain failed.\n");
+    fprintf(stderr, "\nSequence number not valid. Search in blockchain failed.\n");
     return NULL;
   }
 
@@ -124,18 +116,17 @@ Block get_seq_block(Bchain bc, int seq)
 }
 
 
-// search the block with maximum waiting time for a given sequence number
 Block get_seq_max_block(Bchain bc, int seq)
 {
   if(bc == NULL)
   {
-    printf("\nBlockchain pointer is NULL. Search in blockchain failed.\n");
+    fprintf(stderr, "\nBlockchain pointer is NULL. Search in blockchain failed.\n");
     return NULL;
   }
 
   if(is_bchain_empty(bc))
   {
-    printf("\nBlockchain is empty!\n");
+    fprintf(stderr, "\nBlockchain is empty!\n");
     return NULL;
   }
 
@@ -143,7 +134,7 @@ Block get_seq_max_block(Bchain bc, int seq)
 
   if(seq > ls || seq < 0)
   {
-    printf("\nSequence number not valid. Search in blockchain failed.\n");
+    fprintf(stderr, "\nSequence number not valid. Search in blockchain failed.\n");
     return NULL;
   }
 
@@ -173,8 +164,6 @@ Block get_seq_max_block(Bchain bc, int seq)
 }
 
 
-/* get the id of the block with sequence number previous to the one requested
-  and that has maximum rand_sec value */
 bool get_prev_id(Bchain bc, unsigned char prev_id[SHA256_DIGEST_LENGTH], int seq)
 {
   bool found = false;
@@ -189,25 +178,25 @@ bool get_prev_id(Bchain bc, unsigned char prev_id[SHA256_DIGEST_LENGTH], int seq
   return found;
 }
 
-// get a list of info that are related to the searched info
+
 List get_related_info(Bchain bc, void* searched_info, COMPARE_BLOCK_INFO)
 {
 
   if(bc == NULL)
   {
-    printf("\n Blockchain pointer is NULL. Search of list of related info in blockchain failed.\n");
+    fprintf(stderr, "\nBlockchain pointer is NULL. Search of list of related info in blockchain failed.\n");
     return NULL;
   }
 
   if(searched_info == NULL)
   {
-    printf("\n info pointer to search is NULL. Search of list of related info in blockchain failed.\n");
+    fprintf(stderr, "\ninfo pointer to search is NULL. Search of list of related info in blockchain failed.\n");
     return NULL;
   }
 
   if(is_bchain_empty(bc))
   {
-    printf("\nBlockchain is empty!\n");
+    fprintf(stderr, "\nBlockchain is empty!\n");
     return NULL;
   }
 
@@ -249,7 +238,6 @@ bool is_bchain_empty(Bchain bc)
 }
 
 
-// check if bchain has multi-tail
 bool has_multi_tail(Bchain bc)
 {
   Block fbls; // First Bock with Last Sequence number
@@ -263,19 +251,19 @@ bool is_block_in_bchain(Bchain bc, Block bl_to_search)
 {
   if(bc == NULL)
   {
-    printf("\n Blockchain pointer is NULL. Search of block in blockchain failed.\n");
+    fprintf(stderr, "\nBlockchain pointer is NULL. Search of block in blockchain failed.\n");
     return false;
   }
 
   if(bl_to_search == NULL)
   {
-    printf("\n Block pointer is NULL. Search of block in blockchain failed.\n");
+    fprintf(stderr, "\nBlock pointer is NULL. Search of block in blockchain failed.\n");
     return false;
   }
 
   if(is_bchain_empty(bc))
   {
-    printf("\nBlockchain is empty!\n");
+    fprintf(stderr, "\nBlockchain is empty!\n");
     return false;
   }
 
@@ -306,19 +294,19 @@ bool is_info_in_bchain(Bchain bc, void* info_to_search, COMPARE_BLOCK_INFO)
 {
   if(bc == NULL)
   {
-    printf("\n Blockchain pointer is NULL. Search of info in blockchain failed.\n");
+    fprintf(stderr, "\n Blockchain pointer is NULL. Search of info in blockchain failed.\n");
     return false;
   }
 
   if(info_to_search == NULL)
   {
-    printf("\n info pointer to search is NULL. Search of info in blockchain failed.\n");
+    fprintf(stderr, "\n info pointer to search is NULL. Search of info in blockchain failed.\n");
     return false;
   }
 
   if(is_bchain_empty(bc))
   {
-    printf("\nBlockchain is empty!\n");
+    fprintf(stderr, "\nBlockchain is empty!\n");
     return false;
   }
 
@@ -347,7 +335,6 @@ bool is_info_in_bchain(Bchain bc, void* info_to_search, COMPARE_BLOCK_INFO)
 
 
 //----------------------------------------------------------------UTILITY METHOD
-// calculation of a hash dependent on the previous hash
 hash_t id_hashing(hash_t prev_hash_id, char not_hash_id[BUFFLEN])
 {
  hash_t hash_id;
@@ -371,7 +358,6 @@ hash_t id_hashing(hash_t prev_hash_id, char not_hash_id[BUFFLEN])
 }
 
 
-// save a copy of not max tails in tails_to_cut list
 void save_not_max_tails(Bchain bc)
 {
   Block prev_block = get_seq_max_block(bc, get_last_seq(bc) - 1);
@@ -423,6 +409,9 @@ void remove_tail(Tail_tc tail_prev)
     prev->side = tmp->side;
   }
 
+  tmp->side = NULL;
+  tmp->next = NULL;
+
   free(tmp);
 }
 //------------------------------------------------------------------VISIT METHOD
@@ -430,7 +419,7 @@ void visit_block(Block bl, VISIT_BLOCK_INFO)
 {
   if(bl == NULL)
   {
-    printf("\nBlock pointer is NULL. Visit block failed.\n");
+    fprintf(stderr, "\nBlock pointer is NULL. Visit block failed.\n");
     return;
   }
 
@@ -442,14 +431,14 @@ void visit_block(Block bl, VISIT_BLOCK_INFO)
   printf("\nBLOCK ID:");
   print_hash(bl->id);
 
-  printf("CREATOR:\n");
+  printf("\nCREATOR:");
   visit_net_ent(&bl->creator);
 
-  printf("WAITING TIME --->%d sec\t", bl->rand_sec);
-  printf("\nCONFIRMED ---> %s\n\n", (bl->confirmed == 1) ? "TRUE" : "FALSE");
+  printf("WAITING TIME ---> %d sec\n", bl->rand_sec);
 
   printf("INFO-->");
   visit_block_info(bl->info);
+
   return;
 }
 
@@ -458,13 +447,13 @@ void visit_tails_to_cut(Bchain bc, VISIT_BLOCK_INFO)
 {
   List ttc = bc->tails_to_cut;
 
-  for(int i=0; i<100; i++) printf("-");
+  for(int i=0; i<30; i++) printf("-");
   printf("\nLIST OF TAILS TO CUT\n");
-  for(int i=0; i<100; i++) printf("-");
+  for(int i=0; i<30; i++) printf("-");
 
   if (is_list_empty(ttc))
   {
-    printf("\nList is empty\n");
+    fprintf(stderr, "\nList is empty\n");
     return;
   }
 
@@ -501,7 +490,7 @@ void visit_genesis(Bchain bc)
   print_hash(gen->id);
   printf("CREATOR: ");
   visit_net_ent( &(gen->creator) );
-  printf("RANDOM WAITING TIME: 0; \n CONFIRMED: TRUE\nINFO-->NULL\n");
+  printf("RANDOM WAITING TIME: 0;\nINFO-->NULL\n");
 }
 
 
@@ -520,10 +509,14 @@ void visit_side_block(Block bl, int ti, VISIT_BLOCK_INFO)
   for(int i = 0; i < ti; i++) printf("\t");
   print_hash(bl->prev_id);
 
+  printf("\n");
+
   for(int i = 0; i < ti; i++) printf("\t");
   printf("BLOCK ID:\n");
   for(int i = 0; i < ti; i++) printf("\t");
   print_hash(bl->id);
+
+  printf("\n");
 
   for(int i = 0; i < ti; i++) printf("\t");
   printf("CREATOR: ");
@@ -533,30 +526,26 @@ void visit_side_block(Block bl, int ti, VISIT_BLOCK_INFO)
   printf("WAITING TIME: %d;\n", bl->rand_sec);
 
   for(int i = 0; i < ti; i++) printf("\t");
-  printf("CONFIRMED: %s\n", (bl->confirmed == 1) ? "TRUE" : "FALSE");
-
-  for(int i = 0; i < ti; i++) printf("\t");
   printf("INFO-->");
   visit_block_info(bl->info);
-  printf("\n");
+  printf("\n\n");
 
   visit_side_block(bl->side, ++ti, visit_block_info);
   return;
 }
 
 
-// visit every block of bchain
 void visit_bchain(Bchain bc, VISIT_BLOCK_INFO)
 {
   if(bc == NULL)
   {
-    printf("\n Blockchain pointer is NULL. Visit of the blockchain failed.\n");
+    fprintf(stderr, "\n Blockchain pointer is NULL. Visit of the blockchain failed.\n");
     return;
   }
 
   if(is_bchain_empty(bc))
   {
-    printf("\nBlockchain is empty!\n");
+    fprintf(stderr, "\nBlockchain is empty!\n");
     return;
   }
 
@@ -589,15 +578,15 @@ void visit_bchain(Bchain bc, VISIT_BLOCK_INFO)
     tmp_bl = tmp_bl->next;
     si++;
   }
+  visit_tails_to_cut(bc, visit_block_info);
 }
 
 //--------------------------------------------------------------------ADD METHOD
-// add new (next or tail) block
 bool add_block(Bchain bc, Block bl)
 {
   if(bc == NULL || bl == NULL)
   {
-    printf("\npointer of Blockchain OR pointer of block to add is NULL. Addition of block to the blockchain, failed.\n");
+    fprintf(stderr, "\npointer of Blockchain OR pointer of block to add is NULL. Addition of block to the blockchain, failed.\n");
     return false;
   }
 
@@ -608,7 +597,7 @@ bool add_block(Bchain bc, Block bl)
   // number equal to the last or equal to its next one
   if(bl->seq > ls + 1 || bl->seq < ls)
   {
-    printf("\nBlock sequence number (%d) not compatible with the current sequence number of the chain (%d).\n", bl->seq, get_last_seq(bc));
+    fprintf(stderr, "\nBlock sequence number (%d) not compatible with the current sequence number of the chain (%d).\n", bl->seq, get_last_seq(bc));
     return false;
   }
 
@@ -627,6 +616,13 @@ bool add_block(Bchain bc, Block bl)
     // find last max tail added
     Block lt = bc->max_tail;
 
+    // check if new block has the same prev_id
+    if( !hash_equal(lt->prev_id, bl->prev_id) )
+    {
+      fprintf(stderr, "\nprev_id of new tail not equal to prev_id of current tail.\n");
+      return false;
+    }
+
     // if max tail is not the last tail added
     while( lt->side != NULL )
       lt = lt->side;  // scroll untill find the last one
@@ -640,14 +636,21 @@ bool add_block(Bchain bc, Block bl)
   }
   else // add next sequence block
   {
+    // last max tail
+    Block lt = bc->max_tail;
+    // check if new block has prev_id equal to id of max tail
+    if( !hash_equal(lt->id, bl->prev_id) )
+    {
+      fprintf(stderr, "\nprev_id of new tail not equal to prev_id of current tail.\n");
+      return false;
+    }
+
     // check if multi-tail
     if( has_multi_tail(bc) )
     {  // add the previous block of tails that are not valid to the list of tails to be cut
       save_not_max_tails(bc);
     }
 
-    // last max tail
-    Block lt = bc->max_tail;
     // add the new block
     lt->next = bl;
     // update the max tail
@@ -659,12 +662,11 @@ bool add_block(Bchain bc, Block bl)
 }
 
 
-// add a recreated block and remove the corresponding old tail
 bool add_recreated_tail(Bchain bc, Block recreated, hash_t old_tail_id)
 {
   if(bc == NULL || recreated == NULL)
   {
-    printf("\npointer of Blockchain OR pointer of recreated block to add is NULL. Addition of recreated block to the blockchain, failed.\n");
+    fprintf(stderr, "\npointer of Blockchain OR pointer of recreated block to add is NULL. Addition of recreated block to the blockchain, failed.\n");
     return false;
   }
 
@@ -680,7 +682,7 @@ bool add_recreated_tail(Bchain bc, Block recreated, hash_t old_tail_id)
 
     if(tail_prev->prev_type == FATHER)
       tail = tail_prev->prev_bl->next;
-    else
+    else // BROTHER type
       tail = tail_prev->prev_bl->side;
 
     if(tail != NULL)
@@ -699,7 +701,7 @@ bool add_recreated_tail(Bchain bc, Block recreated, hash_t old_tail_id)
     return false;
 
 
-  // remove tail from bchain
+  // remove tail from tails_to_cut
   extract_from_list_by_index(bc->tails_to_cut, prev_ind);
   // remove tail from bchain
   remove_tail(tail_prev);
