@@ -1,7 +1,6 @@
 #include "../header/p2p.h"
 
 //----------------------------------------------------------NET UTILITY FUNCTION
-// function for rapid initialization of an address
 void fill_address(
   struct sockaddr_in* socket_address, // I/O param
   sa_family_t         family,         // Address Family (AF_INET)
@@ -30,25 +29,45 @@ void fill_address(
 }
 
 
-// authorizzation protocol for access to network
-bool sha256_auth(int server_fd, hash_t hash_psw)
+
+int server_auth(struct s_net_ent server, hash_t h_psw)
 {
-  short response;
+  int server_fd;
+  struct sockaddr_in server_add;
+
+  fill_address(&server_add, AF_INET, server.addr, server.port);
+  server_fd = Socket(AF_INET, SOCK_STREAM, 0);
+
+  // establish the connection with the server
+
+  if( Connect(server_fd, (struct sockaddr *)&server_add) != 0)
+  {
+    close(server_fd);
+    fprintf(stderr, "\nserver not active\n");
+    return -1;
+  }
+
+  // check hash password
+
+  short auth;
   printf("sending hash code to server...\n");
 
-  if( full_write(server_fd, hash_psw, SHA256_DIGEST_LENGTH) != 0)
+  if( full_write(server_fd, h_psw, SHA256_DIGEST_LENGTH) != 0)
     exit(EXIT_FAILURE);
 
-  printf("Waiting for response...\n" );
+  printf("Waiting for authorization...\n" );
 
-  recv_short(server_fd, &response);
+  recv_short(server_fd, &auth);
 
-  if(response)
-    return true;
-  else
-    return false;
+  if(!auth)
+  { // wrong password
+    fprintf(stderr, "\nwrong password, retry!\n");
+    return -1;
+  }
+
+  printf("successful connection with server!\n");
+  return server_fd;
 }
-
 
 
 //----------------------------------------------------------NET TRAFFIC FUNCTION
