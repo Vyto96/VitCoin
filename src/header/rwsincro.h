@@ -1,6 +1,13 @@
 #ifndef RWSINCRO_H
 #define RWSINCRO_H
 
+/*
+  Implementation of algorithms for the synchronization of writers and readers,
+   with choice of priorities, taken from the book:
+   "Operating systems. Concepts and examples" by A. Silberschatz.
+*/
+
+
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdlib.h>
