@@ -25,7 +25,7 @@ Trns create_transaction(char* ts, float am, struct s_net_ent src, struct s_net_e
 
 char* describe_trns(Trns t);
 
-void visit_trns(void *args);
+void visit_trns(void *arg);
 
 void printViTCmsg(char *s);
 

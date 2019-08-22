@@ -20,14 +20,16 @@ char* describe_trns(Trns t)
     return desc;
 }
 
-void visit_trns(void *args)
+void visit_trns(void *arg)
 {
-  Trns t = (Trns)args;
+  if(arg == NULL)
+  {
+    printf("transaction void\n");
+    return;
+  }
+  Trns t = (Trns)arg;
 
-  printf("%s\n", t->time_stamp);
-  printf("mittente: [%s:%d]\n", t->src.addr, t->src.port);
-  printf("destinatario: [%s:%d]\n", t->dst.addr, t->dst.port);
-  printf("\n-->amount: %5.2f ѶCoin \n\n", t->amount);
+  printf("%s\n", describe_trns(t));
 }
 
 
