@@ -12,9 +12,8 @@ void print_hash(hash_t h)
 {
   // printf("\n");
   for(int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-  {
     printf("%02x", h[i]);
-  }
+  
   printf("\n");
 }
 
