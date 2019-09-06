@@ -1,0 +1,38 @@
+\section{Traccia progetto}
+\lettrine{L}{a} seguente relazione è stata realizzata per descrivere il progetto realizzato per la traccia scelta: \textit{BitCoin}.
+\\Tale traccia prevede lo sviluppo e la gestione di una criptovaluta  (come il \textit{BitCoin} appunto) mediante l'utilizzo di una blockchain. \\Tuttavia un caso reale di implementazione prevederebbe tutta una serie di concetti\footnote{concetti quali \textit{mining, cifratura, validazione blocchi, creazione di hash} ecc, sono stati evitati o comunque implementati in maniera semplificata(simbolica). Tutto sarà  spiegato più avanti nei rispettivi paragrafi.}, casistiche e problemi da risolvere non esplicitamente richiesti dalla traccia, la quale, per questo motivo viene riportata di seguito in modo da poter spiegare le scelte effettuate per l'implementazione.
+
+\section*{Descrizione generale}
+Si vuole realizzare un sistema per la gestione di una criptovaluta basato su una rete P2P. \\ Il sistema è basato sulla gestione di una blockchain, ovvero una sequenza di blocchi in cui ogni blocco contiene una transazione.\\
+Il sistema si compone di due tipi di nodi: NodiN e NodiW. I NodiN creano la rete P2P e gestiscono la blockchain. Inoltre stampano la blockchain ogni volta che viene aggiunto un blocco: (blocco 1)->(blocco 2)->(blocco 3)->(blocco 4). \\I NodiW gestiscono i wallet (portafogli virtuali) che consentono di inviare e ricevere pagamenti. Ad ogni nuovo pagamento inviato o ricevuto il nodo stampa la transazione ed il totale del portafogli.
+
+\subsection*{Descrizione dettagliata NodoW}
+Un NodoW per ricevere un pagamento fornisce il proprio nome (IP PORTA) ed attende di ricevere il blocco contenente la transazione corrispondente. Ricevuta la transazione si somma l’ammontare al totale del wallet. \\Per effettuare un pagamento si crea una transazione formata da:\\ IP PORTA MITT:AMMONTARE:IP PORTA DEST:NUMERO RANDOM e la si invia ad un NodoN cui il NodoW è connesso.
+
+\subsection*{Descrizione dettagliata NodoN}
+Ogni NodoN gestisce una copia della blockchain, una sequenza di blocchi in cui ogni blocco contiene una transazione. \\Un blocco contiene: il numero di blocco progressivo, tempo di attesa random, transazione (IP PORTA MITT:AMMONTARE:IP PORTA DEST:NUMERO RANDOM). \\Una blockchain inizia con un blocco genesi, ovvero un blocco uguale per tutti i NodiN. Un NodoN che riceve una transazione, la memorizza in un blocco, attende un tempo random (in [5,15] sec) che inserisce nel blocco, inserisce il blocco in testa alla blockchain e lo invia a tutti i NodiN e NodiW connessi. \\Un NodoN che riceve un nuovo blocco lo inserisce in testa alla blockchain e se si trova nella fase di attesa per l’inserimento di un blocco con lo stesso numero progressivo, invalida il proprio blocco, crea un nuovo blocco e tenta nuovamente l’inserimento. \\Nel caso in cui un NodoN ricevesse un blocco con lo stesso numero progressivo del blocco in testa alla blockchain, lo inserirebbe allo stesso livello della testa (in questo modo in testa alla blockchain ci possono essere più blocchi diversi). Nel caso in cui si dovesse aggiungere un blocco ad una blockchain con più blocchi in testa, si sceglierebbe il blocco che presenta la maggiore somma dei tempi di attesa random a partire dal primo.
+
+\textbf{Opzionale}: nel caso di aggiunta di un blocco ad una blockchain con più nodi in testa, dopo aver aggiunto il nuovo blocco dopo il blocco che presenta la maggiore somma dei tempi di attesa random a partire dal primo, rimuovere tutti gli altri blocchi dello stesso livello. Il nodo che aveva per primo aggiunto un blocco duplicato ha la responsabilità di creare un nuovo blocco e tentare nuovamente l’inserimento.
+
+\section{Definizioni e Assunzioni}
+A scanso di equivoci, verranno adesso date le seguenti \textbf{definizioni} usate nella relazione, corrispondenti ad elementi della traccia:
+\begin{itemize}
+\item[•] \textit{NodiN} chiamati da ora in poi \textbf{peer}.
+
+\item[•] \textit{NodiW} chiamati da ora in poi \textbf{wallet}.
+
+\item[•] I \textit{blocchi in testa} alla blockchain saranno chiamati \textbf{code}. Quindi in caso di inserimento di un blocco  con lo stesso numero di sequenza di una coda, si parlerà di inserimento di una \textbf{multicoda}.
+\item[•] l'accoppiata \textit{IP PORTA} viene rappresentata dalla \textbf{Net\_ent}, la quale consiste in una struct contenente appositi campi \footnote{una stringa per l'indirizzo IP e un unsigned short per la porta.}.
+\item[•] Il nome scelto per la criptomoneta è \textbf{\vitcoin} per ovvie ragioni.
+\end{itemize}
+ 
+Inoltre vengono qui esplicitate le seguenti \textbf{assunzioni} (spiegate nel dettaglio più avanti) fatte per semplificare la gestione della rete p2p e della blockchain:
+\begin{itemize}
+\item[•]\textbf{crush dei peer non gestito:} si assume che i peer che sono riusciti a connettersi alla rete non possano crushare, ma che possano soltanto essere chiusi volontariamente. Ciò viene fatto per i seguenti motivi:
+\begin{itemize}
+\item l'unico modo che hanno,  i peer che erano connessi al peer crushato, per "capire" se sono ancora connessi alla rete\footnote{cioè per capire se il grafo rappresentante la rete sia ancora una grafo connesso} è quello di mantenere la topologia di tutta rete appunto. Ciò permetterebbe ai suddetti peer di connettersi ai peer necessari per garantire la loro connessione diretta (o indiretta) al resto della rete\footnote{i peer a cui connettersi potrebbero essere scelti attraverso un algoritmo di costruzione di un \textit{MST: Minimum Spanning Tree}}.
+\item Un altro motivo è quello della difficoltà nel sincronizzare le blockchain tra, i peer che erano stati tagliati fuori dalla rete momentanemente e quelli a cui essi si connettono per riconntersi alla rete.
+\end{itemize}
+\item[•]\textbf{dimensioni della rete piccola:} tale assunzione e re sa possibile ovviamente dal fatto che il progetto sia ai fini universitari. Essa viene fatta sostanzialmente per "garantire"\footnote{ovviamente data la contemporaneità  dell'attività dei peer, al crescere del numero di questi, questa "garanzia simbolica" va sempre più a diminuire} il fatto che ad un peer non arrivino mai blocchi con un numero di sequenza inferiore al numero dell' ultimo  blocco inserito nella propria blockchain.\\ Ciò significa che è possibile inserire solo blocchi con un numero di sequenza uguale (multicoda) o successivo al numero di sequenza dell'ultimo blocco appunto. A sua volta tale meccanismo semplifica l'implementazione della parte \textbf{opzionale} della traccia come spiegato più avanti nell'apposito paragrafo.
+\end{itemize}
+

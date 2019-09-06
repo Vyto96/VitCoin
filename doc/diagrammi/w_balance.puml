@@ -1,0 +1,28 @@
+@startuml
+hide footbox
+
+participant wallet
+participant peer
+
+wallet -> peer: <short> **W_BALANCE**
+
+hnote over peer
+  Get list trns( wallet_Net_ent )
+end note
+
+wallet <- peer: <int> n° di transazioni nella lista 
+
+alt se numero di transazioni è 0
+  wallet -> wallet: return
+  peer -> peer: return
+end
+
+loop numero di transazioni
+  peer -> wallet: <struct s_trns> transazione riguardante il wallet
+end
+
+hnote over wallet
+  Refresh balance
+end note
+
+@enduml

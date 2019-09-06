@@ -1,0 +1,29 @@
+@startuml
+hide footbox
+
+participant new_peer
+participant peer_X
+
+new_peer -> peer_X: <short> **HOOK_P2P**
+new_peer -> peer_X: <struct s_hook_pkg> {my_service_net_ent, download_flag}
+
+alt se download_flag è attivo
+  new_peer <- peer_X: <int> n° di blocchi della blockchain
+
+  loop n° di blocchi
+    new_peer <- peer_X: <struct s_block_pkg> Blocco i-esimo
+
+    alt se si è verificato un errore di comunicazione
+      new_peer -> new_peer: ritorna NULL
+    end
+
+    hnote over new_peer
+      Add block to blockchain
+    end note
+
+  end
+end
+
+new_peer -> new_peer: ritorna il peer connesso
+
+@enduml

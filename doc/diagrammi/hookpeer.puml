@@ -1,0 +1,45 @@
+@startuml
+hide footbox
+participant server
+participant peer_0
+
+server <- peer_0: <short> **HOOK_PEER**
+server <- peer_0: <Net_ent> Net_ent di servizio del peer
+alt Primo peer della rete (n° di peer = 0)
+  server -> peer_0: <integer> 0
+  hnote over peer_0
+    Init Genesis block
+  end note
+  alt blocco creato correttamente
+    server <- peer_0: <short> conferma creazione blocco
+    hnote over server
+      Add peer_0 to network list
+    end note
+  else errore durante la creazione del blocco genesi
+    server <- peer_0: <short> errore creazione blocco
+  end
+
+else il peer non è il primo della rete
+  server -> peer_0: <integer> numero di peers a cui il peer deve connettersi
+
+  loop numero di peers
+    server -> peer_0:<Net_ent> peer_X
+    hnote over peer_0
+      Hook to peer protocol( peer_X )
+    end note
+    alt se la connessione è andata a buon fine
+      hnote over peer_0
+        Add peer_X to list of connected peer
+      end note
+    end
+    peer_0 -> server: <short> risultato connessione
+  end
+  alt almeno una connessione effettuata
+    hnote over server
+      Add peer_0 to network list
+    end note
+  end
+end
+
+
+@enduml

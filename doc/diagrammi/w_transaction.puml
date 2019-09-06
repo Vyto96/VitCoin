@@ -1,0 +1,30 @@
+@startuml
+hide footbox
+
+participant wallet
+participant peer
+
+wallet -> peer: <short> **W_TRANSACTION**
+wallet -> peer: <struct s_trns> transazione da inserire
+
+peer -> wallet: <short> transazione ricevuta
+
+hnote over peer
+  blocco_creato =
+  Sync_in_blockchain( transazione )
+end note
+
+peer -> wallet: <short> conferma creazione blocco
+
+hnote over peer
+   Flooding( blocco_creato, P_BLOCK, my_service_ent )
+end note
+
+alt controlla se il wallet stava "minando"
+  hnote over peer
+     warn_wallet( transazione )
+  end note
+end
+
+
+@enduml

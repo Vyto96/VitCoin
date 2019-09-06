@@ -1,0 +1,59 @@
+\documentclass[12pt]{report}
+
+%language packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}  
+
+%images packages
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+\usepackage{lettrine} % to get a first giant section letter
+\usepackage{float} % used to float a figure (H option)
+\usepackage{sidecap} % used to place a caption beside a figure
+
+\usepackage{listings}
+\lstset{
+  language=bash,
+  basicstyle=\ttfamily
+}
+\newcommand{\vitcoin}{\textit{V}itCoin}
+
+\title{
+    \Large{{UNIVERSITÀ DEGLI STUDI DI NAPOLI PARTHENOPE}}\\
+    {Corso di Laurea in Informatica}\\
+    {Dipartimento di Scienze e Tecnologie}\\
+    \vspace{0.5cm}
+    \includegraphics[scale=0.70]{Parthenope_logo.png}\\
+	{\textbf{Progetto per l'esame di \\ \textit{Reti dei Calcolatori:}}}\\
+    {\textbf{\vitcoin}}
+}
+\author{Vittorio Zavino}
+\date{\today}
+
+
+\usepackage{hyperref}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\listoffigures
+
+\chapter{Descrizione progetto}
+\input{chapters/cp01.tex}
+
+\chapter{Architettura di rete}
+\input{chapters/cp02.tex}
+
+\chapter{Protocollo applicazione}
+\input{chapters/cp03.tex}
+
+\chapter{Manuale Utente}
+\input{chapters/cp04.tex}
+
+\end{document}
+
+

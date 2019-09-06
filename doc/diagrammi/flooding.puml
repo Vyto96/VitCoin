@@ -1,0 +1,19 @@
+@startuml
+hide footbox
+title Flooding( pkg, pkg_type, pkg_sender)
+participant peer
+participant peer_i
+
+loop peer connessi
+  alt se l i-esimo peer è il pkg_sender
+    peer -> peer: continue
+  end
+  peer -> peer_i: <short> macro indicata da pkg_type
+  alt se pkg_type è P_BLOCK
+    peer -> peer_i: <struct s_block_pkg> blocco creato/ricevuto
+  else pkg_type è P_RECREATED_BLOCK
+    peer -> peer_i: <struct s_recreated_pkg> blocco ricreato/ricevuto
+  end
+end
+
+@enduml

@@ -1,0 +1,66 @@
+\lettrine{L}{a} directory rilasciata contiene i seguenti elementi:
+\begin{itemize}
+\item[•] \textbf{CMakeLists.txt}.
+\item[•] \textbf{doc/} cartella contente tutta la documentazione, copresa questa relazione.
+\item[•] \textbf{LICENSE} file per il rilascio del software sotto la \textit{GNU GENERAL PUBLIC LICENSE}.
+\item[•] \textbf{src/} cartella contenente tutti i sorgenti.
+\end{itemize}
+
+\subsection{Requisiti di utilizzo}
+Il progetto è stato sviluppato e testato per l'utilizzo su piattaforme \textbf{Unix-like} che soddisfano i seguenti requisiti:
+
+\begin{itemize}
+\item[•]l'utility \textbf{Cmake}\footnote{\url{https://cmake.org}} versione minima 3.10.2
+\item[•]la libreria \textbf{OpenSSL}\footnote{\url{https://www.openssl.org/}}
+\end{itemize}
+
+\subsection{Istruzioni per la compilazione}
+Partendo dalla directory principale del progetto basterà compilare il CMakeLists.txt file, con CMake in un'apposita cartella da creare in cui poi spostarsi:
+
+\begin{lstlisting}
+$ mkdir build && cd build
+\end{lstlisting}
+
+Lanciare CMake con il comando:
+\begin{lstlisting}
+$ cmake ..
+\end{lstlisting}
+
+Lanciare quindi lanciare make:
+
+\begin{lstlisting}
+$ make
+\end{lstlisting}
+
+A questo punto nella directory bin (creata appositamente da cmake )saranno presenti i file eseguibili.
+
+\subsection{Istruzioni per l'esecuzione}
+\begin{lstlisting}
+$ ./eseguibile -h
+\end{lstlisting}
+
+Per tutti e 3 gli eseguibili è disponibile lo \textit{Usage} mostrato a display attraverso l'opzione \textbf{-h}, il quale mostrerà tutte le possibili opzioni usabili per settare vari parametri quali ad esempio la \textit{password} da usare per l'accesso alla rete, \textit{l'indirizzo ip} e \textit{la porta del server centrale}. \\
+
+Tutte le opzioni in quanto tali possono essere omesse abilitando i parametri di default. Tuttavia per i peer è obbligatorio fornire la \textit{port di servizio}\footnote{porta su cui il peer si mette in ascolto per le sue funzionalità da server} attraverso l'opzione \textbf{\-s}.\\
+
+Si sottolinea infine, che attraverso l'opzione \textbf{-t}, è possibile abilitare (oltre ad un tempo non d'attesa per la creazione di un blocco non randomico), per il peer che viene lanciato per primo, la possibilità di generare oltre che al blocco genesi, anche una blockchain di prova appositamente creata per dimostrare il funzionamento della parte opzionale del progetto. Tale blockchain contiene 5 blocchi e ha come ultimo numero di sequenza 3 in modo da avere due \textbf{code}. Di conseguenza il primo nuovo blocco inserito creato farà scattare la procedura di ricreazione della coda minore in termini di tempo d'attesa. \\
+
+Di seguito la sequenza di comandi da lanciare per un test con le opzioni di default e la fake blockchain:\\
+
+Lancio del server
+\begin{lstlisting}
+$ ./server
+\end{lstlisting}
+
+Lancio di uno o più peer (numero di porta diverso per ognuno)
+\begin{lstlisting}
+$ ./peer -s 2222 -t 2
+\end{lstlisting}
+
+Lancio di uno o più wallet
+\begin{lstlisting}
+$ ./wallet
+\end{lstlisting}
+
+
+
